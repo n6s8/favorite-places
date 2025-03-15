@@ -7,11 +7,11 @@ import {
   PermissionStatus,
 } from "expo-location";
 import { useState, useEffect } from "react";
-import { getMapPreview } from "../../util/location";
+import { getAddress, getMapPreview } from "../../util/location";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { useIsFocused } from "@react-navigation/native"; // Исправленный импорт
+import { useIsFocused } from "@react-navigation/native";
 
-export default function LocationPicker() {
+export default function LocationPicker({ onPickLocation }) {
   const navigation = useNavigation();
   const [pickedLocation, setPickedLocation] = useState();
   const isFocused = useIsFocused();
@@ -20,10 +20,22 @@ export default function LocationPicker() {
   const route = useRoute();
 
   useEffect(() => {
+    async function handleLocation() {
+      if (pickedLocation) {
+        const address = await getAddress(
+          pickedLocation.lat,
+          pickedLocation.lng,
+        );
+        onPickLocation({ ...pickedLocation, address: address });
+      }
+    }
+    handleLocation();
+  }, [pickedLocation, onPickLocation]);
+  useEffect(() => {
     if (isFocused && route.params) {
       const mapPickedLocation = {
         lat: route.params.pickedLat,
-        lng: route.params.pickedLng, // Исправленный параметр (раньше было `lng`)
+        lng: route.params.pickedLng,
       };
       setPickedLocation(mapPickedLocation);
     }

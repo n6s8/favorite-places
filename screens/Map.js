@@ -29,7 +29,7 @@ export default function Map({ navigation }) {
     }
     navigation.navigate("AddPlace", {
       pickedLat: selectedLocation.lat,
-      pickedLnd: selectedLocation.lng,
+      pickedLng: selectedLocation.lng,
     });
   }, [selectedLocation, navigation]);
 
